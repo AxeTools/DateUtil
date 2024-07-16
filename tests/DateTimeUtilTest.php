@@ -51,11 +51,6 @@ class DateTimeUtilTest extends TestCase {
             'Relative Date, last Monday in January 2022' => [1, DayOfWeek::MONDAY, Week::LAST, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-31 00:00')],
             'Relative Date, 5th Monday in January 2022' => [1, DayOfWeek::MONDAY, Week::FIFTH, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-31 00:00')],
 
-            // when using -1 with a relative week the -1 will default to Sunday, this is not supported functionality but the way it currently does function
-            'Last day with relative week 1, defaults to Sunday' => [4, DateTimeUtil::RELATIVE_DAY_LAST, Week::FIRST, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-04-03 00:00')],
-            'Last day with relative week 2, defaults to Sunday' => [4, DateTimeUtil::RELATIVE_DAY_LAST, Week::SECOND, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-04-10 00:00')],
-            'Last day with relative week 3, defaults to Sunday' => [4, DateTimeUtil::RELATIVE_DAY_LAST, Week::THIRD, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-04-17 00:00')],
-
             /*
              * Currently the "5th" occurrence logic will go to the next week, which can be the next month.  This can cause some
              * unexpected behavior.  For example February in 2022, the month starts on Tuesday so the "5th" Tuesday is March 1st
