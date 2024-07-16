@@ -1,0 +1,47 @@
+{
+    "name": "axetools/dateutil",
+    "description": "A PHP library of date time related tools",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "datetime",
+        "holiday",
+        "relative",
+        "date",
+        "day"
+    ],
+    "autoload": {
+        "psr-4": {
+            "AxeTools\\Utilities\\DateTime\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ryan W Howe",
+            "email": "axetoolsphp@gmail.com"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "AxeTools\\Utilities\\DateTime\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^5.6 || ^7.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "scripts": {
+        "phpunit": "phpunit --verbose --colors=always",
+        "tests": [
+            "@phpunit"
+        ]
+    },
+    "scripts-descriptions": {
+        "phpunit": "Run PHPUnit tests",
+        "tests": "Run the static analysis and unit tests"
+    }
+}
