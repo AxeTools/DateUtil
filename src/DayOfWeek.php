@@ -12,6 +12,4 @@ class DayOfWeek {
     const FRIDAY = 5;
     const SATURDAY = 6;
 
-    const LAST_DAY = -1;
-
 }

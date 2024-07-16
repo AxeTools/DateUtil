@@ -3,6 +3,7 @@
 namespace AxeTools\Utilities\DateTime;
 
 use DateTime;
+use InvalidArgumentException;
 
 class DateTimeUtil {
 
@@ -50,75 +51,74 @@ class DateTimeUtil {
      * Create a DateTime object from either relative or absolute date parts.  There are some helper objects that are
      * collections of constants to help document the relative behavior that is being asked for.
      *
-     *
      * **Examples:**
-     * <pre>
-     *     Absolute date for January 1st, 2024 getRelativeDateTime(1, 1, null, 2024)
-     *     Absolute date for April 4th this year getRelativeDateTime(4,4)
-     * </pre>
      *
      * <pre>
-     *     Relative first Monday in September this year getRelativeDateTime(9, 1, 1)
-     *     Relative the first day of the current month getRelativeDateTime(null, 1)
-     *     Relative the last tuesday of the current month getRelativeDateTime(null, 2, self::RELATIVE_DAY_LAST)
+     *     Relative first Monday in September this year getRelativeDateTime(9, DayOfWeek::MONDAY, Week::FIRST)
+     *     Relative the 4th Thursday of November getRelativeDateTime(11, DayOfWeek::THURSDAY, Week::FOURTH)
+     *     Relative the last tuesday of the current month getRelativeDateTime(null, DayOfWeek::TUESDAY, Week::LAST)
      *     Relative the last day of the current month getRelativeDateTime(null, self::RELATIVE_DAY_LAST)
      * </pre>
      *
-     * @param ?int $month The month of the year 1 = january, 12 = december, if **null** the current month is to be used
-     * @param ?int $dayOfWeek Either the day of the week 0 = Sunday, 6 = Saturday if weekOfMonth is set, or the absolute
-     *     day of the month if weekOfMonth is null.  If null is passed the current day is used.  Be careful when
-     *     using relative months with absolute days not all months have the same number of days and this will roll
-     *     over into the next month (see tests).  ***For the last day of a month use -1 with weekOfMonth null***
-     * @param ?int $weekOfMonth if used, this is the week of the month 1-5 and -1 to mean the last occurrence of
+     * @param int|null $month The month of the year 1 = january, 12 = december, if **null** the current month is to be used
+     * @param int $dayOfWeek The day of the week 0 = Sunday, 6 = Saturday. <br>***For the last day of a month use getAbsoluteDateTime()***
+     * @param int $weekOfMonth This is the week of the month 1-5 and -1 to mean the last occurrence in
      *     the month.  When in doubt the **last** occurrence is safer to use than the 5th, which may lead to the
      *     next month (see tests).  <br>***Be VERY careful when using relative dates as bounding conditions they may
      *     not consistently occur in the order you expect***
-     * @param ?int $year The year, if **null** the current year is used
+     * @param int|null $year Optional, The year, if **null** the current year is used
      *
+     * @throws InvalidArgumentException if dayOfWeek or weekOfMonth are not set
      * @return DateTime a DateTime object with the time set to 00:00:00
+     *
      * @see DateTimeUtilTest::getRelativeDateTime()
      * @see DayOfWeek
      * @see Week
      */
-    public static function getRelativeDateTime($month = null, $dayOfWeek, $weekOfMonth, $year = null) {
+    public static function getRelativeDateTime($month, $dayOfWeek, $weekOfMonth, $year = null) {
         $year = (null === $year) ? date('Y') : $year;
         $month = (null === $month) ? date('m') : $month;
 
-        if (Week::ABSOLUTE === $weekOfMonth) { // generate an absolute date
-            if ($dayOfWeek === self::RELATIVE_DAY_LAST) { // last day of the month is next month's 0 day
-                $month += 1;
-                $dayOfWeek = 0;
-            }
-            $date = DateTime::createFromFormat(self::DATETIME_FORMAT, $year . "-" . $month . "-" . $dayOfWeek . " 00:00");
-        } else {
-            $date = DateTime::createFromFormat(self::DATETIME_FORMAT, $year . "-" . $month . "-01 00:00");
-            $mapOccurrence = [
-                Week::FIRST => 'first',
-                Week::SECOND => 'second',
-                Week::THIRD => 'third',
-                Week::FOURTH => 'fourth',
-                Week::FIFTH => 'fifth',
-                Week::LAST => 'last'
-            ];
-            $mapDayOfWeek = [
-                DayOfWeek::SUNDAY => 'sunday',
-                DayOfWeek::MONDAY => 'monday',
-                DayOfWeek::TUESDAY => 'tuesday',
-                DayOfWeek::WEDNESDAY => 'wednesday',
-                DayOfWeek::THURSDAY => 'thursday',
-                DayOfWeek::FRIDAY => 'friday',
-                DayOfWeek::SATURDAY => 'saturday',
-                DayOfWeek::LAST_DAY => 'sunday'
-            ];
-            $occurrence = $mapOccurrence[$weekOfMonth];
-            $dayOfWeekName = $mapDayOfWeek[$dayOfWeek];
-            $sMonth = $date->format('F');
-            $date->modify(strtolower(sprintf('%s %s of %s %d', $occurrence, $dayOfWeekName, $sMonth, $year)));
-        }
+        if(null === $dayOfWeek || $dayOfWeek < DayOfWeek::SUNDAY || $dayOfWeek > DayOfWeek::SATURDAY)
+            throw new InvalidArgumentException('dayOfWeek must be set and be between ' . DayOfWeek::SUNDAY . ' and ' . DayOfWeek::SATURDAY);
+        if(null === $weekOfMonth || $weekOfMonth < Week::LAST || $weekOfMonth > Week::FIFTH)
+            throw new InvalidArgumentException('weekOfMonth must be set and be between ' . Week::LAST . ' and ' . Week::FIFTH);
+
+        $date = DateTime::createFromFormat(self::DATETIME_FORMAT, $year . "-" . $month . "-01 00:00");
+
+        if(false === $date) throw new InvalidArgumentException('Invalid date format');
+
+        $mapOccurrence = [
+            Week::FIRST => 'first',
+            Week::SECOND => 'second',
+            Week::THIRD => 'third',
+            Week::FOURTH => 'fourth',
+            Week::FIFTH => 'fifth',
+            Week::LAST => 'last'
+        ];
+        $mapDayOfWeek = [
+            DayOfWeek::SUNDAY => 'sunday',
+            DayOfWeek::MONDAY => 'monday',
+            DayOfWeek::TUESDAY => 'tuesday',
+            DayOfWeek::WEDNESDAY => 'wednesday',
+            DayOfWeek::THURSDAY => 'thursday',
+            DayOfWeek::FRIDAY => 'friday',
+            DayOfWeek::SATURDAY => 'saturday'
+        ];
+        $occurrence = $mapOccurrence[$weekOfMonth];
+        $dayOfWeekName = $mapDayOfWeek[$dayOfWeek];
+        $sMonth = $date->format('F');
+        $date->modify(strtolower(sprintf('%s %s of %s %d', $occurrence, $dayOfWeekName, $sMonth, $year)));
 
         return $date;
     }
 
+    /**
+     * @param int|null $month
+     * @param int|null $day
+     * @param int|null $year
+     * @return DateTime|false
+     */
     public static function getAbsoluteDateTime($month = null, $day = null, $year = null){
         $year = (null === $year) ? date('Y') : $year;
         $month = (null === $month) ? date('m') : $month;
@@ -126,15 +126,17 @@ class DateTimeUtil {
 
         if ($day === self::RELATIVE_DAY_LAST) { // last day of the month is next month's 0 day
             $month += 1;
-            $dayOfWeek = 0;
+            $day = 0;
         }
         $date = DateTime::createFromFormat(self::DATETIME_FORMAT, $year . "-" . $month . "-" . $day . " 00:00");
+        if(false === $date) throw new InvalidArgumentException('Invalid date format');
+        return $date;
     }
 
     public static function usFederalHolidays() {
         return [
             Holiday::create(
-                self::getRelativeDateTime(1, 1),
+                self::getAbsoluteDateTime(1, 1),
                 'New Year\'s Day',
                 'New Year\'s Day',
                 'New Year\'s Day is the first day of the Gregorian calendar.'
@@ -158,13 +160,13 @@ class DateTimeUtil {
                 'Memorial Day commemorates all Americans who have died in military service for the United States.'
             ),
             Holiday::create(
-                self::getRelativeDateTime(6, 19),
+                self::getAbsoluteDateTime(6, 19),
                 'Juneteenth National Freedom Day',
                 'Juneteenth',
                 'Juneteenth National Freedom Day is a state observance in the USA.'
             ),
             Holiday::create(
-                self::getRelativeDateTime(7, 4),
+                self::getAbsoluteDateTime(7, 4),
                 'Independence Day',
                 'Independence Day',
                 'On Independence Day, Americans celebrate the anniversary of publication of the Declaration of Independence from Great Britain in 1776.'
@@ -182,7 +184,7 @@ class DateTimeUtil {
                 'Columbus Day celebrates 15th century explorer Christopher Columbus\'s arrival in America in 1492.'
             ),
             Holiday::create(
-                self::getRelativeDateTime(11, 11),
+                self::getAbsoluteDateTime(11, 11),
                 'Veterans Day',
                 'Veterans Day',
                 'Veterans Day in the USA is a holiday to honor all who have served in the United States Military Services.'
@@ -194,7 +196,7 @@ class DateTimeUtil {
                 'Thanksgiving Day in the United States is traditionally a holiday to give thanks for the food collected at the end of the harvest season.'
             ),
             Holiday::create(
-                self::getRelativeDateTime(12, 25),
+                self::getAbsoluteDateTime(12, 25),
                 'Christmas Day',
                 'Christmas Day',
                 'Christmas Day celebrates Jesus Christ\'s birth.'
