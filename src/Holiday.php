@@ -2,7 +2,7 @@
 
 namespace AxeTools\Utilities\DateTime;
 
-use DateTimeInterface;
+use DateTime;
 
 class Holiday {
 
@@ -10,41 +10,47 @@ class Holiday {
     protected $longName;
     protected $shortName;
     protected $description;
+    protected $observedShift;
 
     /**
-     * @param DateTimeInterface $datetime
-     * @param string            $longName
-     * @param string            $shortName
-     * @param string|null       $description
+     * @param DateTime    $datetime
+     * @param string      $longName
+     * @param string      $shortName
+     * @param string|null $description
+     * @param bool        $observedShift Optional, is the observance of the holiday allowed to shift to an adjacent weekday?  Typically only
+     *  allowed on holidays that have an absolute date that they fall on to allow them to still be observed when they fall on a weekend.
      */
-    public function __construct(DateTimeInterface $datetime, $longName, $shortName, $description = null){
+    public function __construct(DateTime $datetime, $longName, $shortName, $description = null, $observedShift = false) {
         $this->datetime = $datetime;
         $this->longName = $longName;
         $this->shortName = $shortName;
         $this->description = $description;
+        $this->observedShift = $observedShift;
     }
 
     /**
-     * @param DateTimeInterface $dateTime
-     * @param string            $longName
-     * @param string            $shortName
-     * @param string|null       $description
+     * @param DateTime    $dateTime
+     * @param string      $longName
+     * @param string      $shortName
+     * @param string|null $description
+     * @param bool $observedShift Optional, is the observance of the holiday allowed to shift to an adjacent weekday?  Typically only
+     *   allowed on holidays that have an absolute date that they fall on to allow them to still be observed when they fall on a weekend.
      *
      * @return self
      */
-    public static function create(DateTimeInterface $dateTime, $longName, $shortName, $description = null){
-        return new self($dateTime, $longName, $shortName, $description);
+    public static function create(DateTime $dateTime, $longName, $shortName, $description = null, $observedShift = false) {
+        return new self($dateTime, $longName, $shortName, $description, $observedShift);
     }
 
     /**
-     * @return DateTimeInterface
+     * @return DateTime
      */
     public function getDatetime() {
         return $this->datetime;
     }
 
     /**
-     * @param DateTimeInterface $datetime
+     * @param DateTime $datetime
      *
      * @return Holiday
      */
@@ -101,6 +107,23 @@ class Holiday {
      */
     public function setDescription($description) {
         $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return bool is the Holiday is allowed to be shifted for observance
+     */
+    public function isObservedShift() {
+        return $this->observedShift;
+    }
+
+    /**
+     * @param bool $observedShift is the Holiday is allowed to be shifted for observance
+     *
+     * @return Holiday
+     */
+    public function setObservedShift($observedShift) {
+        $this->observedShift = $observedShift;
         return $this;
     }
 

@@ -4,6 +4,7 @@ namespace AxeTools\Utilities\DateTime\Tests;
 
 use AxeTools\Utilities\DateTime\DateTimeUtil;
 use AxeTools\Utilities\DateTime\DayOfWeek;
+use AxeTools\Utilities\DateTime\Holiday;
 use AxeTools\Utilities\DateTime\Week;
 use DateTime;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,21 @@ class DateTimeUtilTest extends TestCase {
      */
     public function getAbsoluteDateTime($month, $day, $year, DateTime $expected) {
         $actual = DateTimeUtil::getAbsoluteDateTime($month, $day, $year);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     * @dataProvider isHolidayDataProvider
+     * @param          $holidays
+     * @param DateTime $testDate
+     * @param          $options
+     * @param          $expected
+     *
+     * @return void
+     */
+    public function isHoliday($holidays, DateTime $testDate, $options, $expected){
+        $actual = DateTimeUtil::isHoliday($holidays, $options, $testDate);
         $this->assertEquals($expected, $actual);
     }
 
@@ -93,5 +109,125 @@ class DateTimeUtilTest extends TestCase {
             // Roll over date, you use a month that exceeds the months' of the year
             'Roll over date, month overload' => [13, 31, 2001, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2002-01-31 00:00')],
            ];
+    }
+
+    public static function isHolidayDataProvider() {
+        return [
+            'No Holidays given' => [
+                [],
+                DateTime::createFromFormat(self::DATETIME_FORMAT, date('Y-m-d 00:00')),
+                DateTimeUtil::HOLIDAY_OBSERVED_NONE,
+                false
+            ],
+
+            /* New Years Day in 2022 was on a Saturday */
+            'US Holidays given, New Years 2022 (saturday) No Observance' => [
+                DateTimeUtil::usFederalHolidays(2022),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_NONE,
+                true
+            ],
+            'US Holidays given, New Years 2022 (saturday) Saturday, Sunday Observance On' => [
+                DateTimeUtil::usFederalHolidays(2022),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY,
+                true
+            ],
+            'US Holidays given, New Years 2022 (saturday) Saturday, Saturday Observance On on Holiday' => [
+                DateTimeUtil::usFederalHolidays(2022),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                false
+            ],
+            'US Holidays given, New Years 2022 (saturday) Saturday, Saturday Observance On on Observed' => [
+                DateTimeUtil::usFederalHolidays(2022),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2021-12-31 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                true
+            ],
+
+            /* New Years Day in 2023 was on a Sunday */
+            'US Holidays given, New Years 2023 (sunday) No Observance' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_NONE,
+                true
+            ],
+            'US Holidays given, New Years 2023 (sunday) Sunday, Saturday Observance On' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                true
+            ],
+            'US Holidays given, New Years 2023 (sunday) Sunday, Sunday Observance On on Holiday' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY,
+                false
+            ],
+            'US Holidays given, New Years 2023 (sunday) Sunday, Sunday Observance On on Observed' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-02 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY,
+                true
+            ],
+
+            'US Holidays given, New Years 2023 (sunday) Sunday, BOTH Observance On on Holiday' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-01 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY | DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                false
+            ],
+            'US Holidays given, New Years 2023 (sunday) Sunday, BOTH Observance On on Observed' => [
+                DateTimeUtil::usFederalHolidays(2023),
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2023-01-02 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY | DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                true
+            ],
+
+            'Father\'s day an unobservable holiday, both observances on' => [
+                [
+                    Holiday::create(
+                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        'Father\'s day',
+                        'Father\'s day',
+                        '',
+                        false
+                    )
+                ],
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2000-06-18 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY | DateTimeUtil::HOLIDAY_OBSERVED_SATURDAY_TO_FRIDAY,
+                true
+            ],
+            'Father\'s day an unobservable holiday, Sunday observance on' => [
+                [
+                    Holiday::create(
+                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        'Father\'s day',
+                        'Father\'s day',
+                        '',
+                        false
+                    )
+                ],
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2000-06-18 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY,
+                true
+            ],
+            'Father\'s day an unobservable holiday, no observance on' => [
+                [
+                    Holiday::create(
+                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        'Father\'s day',
+                        'Father\'s day',
+                        '',
+                        false
+                    )
+                ],
+                DateTime::createFromFormat(self::DATETIME_FORMAT, '2000-06-18 00:00'),
+                DateTimeUtil::HOLIDAY_OBSERVED_NONE,
+                true
+            ],
+
+        ];
     }
 }
