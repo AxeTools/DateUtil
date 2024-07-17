@@ -4,10 +4,26 @@ namespace AxeTools\Utilities\DateTime;
 
 use DateTime;
 
+/**
+ * A class for representing named holiday's
+ *
+ * @since 1.0.0
+ * @package AxeTools\DateUtil
+ */
 class Holiday {
 
+    /**
+     * @var DateTime The Actual generated date for the holiday
+     */
     protected $datetime;
+
+    /**
+     * @var string The full name of the holiday
+     */
     protected $longName;
+    /**
+     * @var string An abbreviated name of the holiday if there is one, otherwise the same as the long name
+     */
     protected $shortName;
     protected $description;
     protected $observedShift;
@@ -15,12 +31,12 @@ class Holiday {
     /**
      * @param DateTime    $datetime
      * @param string      $longName
-     * @param string      $shortName
-     * @param string|null $description
+     * @param string|null $shortName Optional abbreviated name of the holiday
+     * @param string|null $description Optional description of the holiday
      * @param bool        $observedShift Optional, is the observance of the holiday allowed to shift to an adjacent weekday?  Typically only
      *  allowed on holidays that have an absolute date that they fall on to allow them to still be observed when they fall on a weekend.
      */
-    public function __construct(DateTime $datetime, $longName, $shortName, $description = null, $observedShift = false) {
+    public function __construct(DateTime $datetime, $longName, $shortName = null, $description = null, $observedShift = false) {
         $this->datetime = $datetime;
         $this->longName = $longName;
         $this->shortName = $shortName;
@@ -77,14 +93,14 @@ class Holiday {
     }
 
     /**
-     * @return string
+     * @return string if a short name is not set this will return the long name
      */
     public function getShortName() {
-        return $this->shortName;
+        return (null === $this->shortName) ? $this->getLongName() : $this->shortName;
     }
 
     /**
-     * @param string $shortName
+     * @param string|null $shortName
      *
      * @return Holiday
      */
