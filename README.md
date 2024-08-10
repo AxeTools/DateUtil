@@ -14,9 +14,27 @@ io/packagist/l/AxeTools/DateUtil.svg?style=flat-square&colorB=darkcyan" alt="Rea
 
 This project uses [Semantic Versioning][].
 
-[Bitwise operators][] allow for manipulation and examination of specific bits within an integer.
+The `DateUtil` gives simple methods for creating relative dates, absolute dates and utilities for creating holidays and determining if the current day is a holiday or not.
 
-The `DateUtil` gives simple methods for creating relative dates.
+Some Examples.
+
+```php
+<?php
+// The first Monday of the Month of September for the current year
+$labor_day = DateTimeUtil::RelativeDateTime(9, DayOfWeek::MONDAY, Week::FIRST);
+
+// Get Christmas day, December 25th for the current year
+$christmas_day = DateTimeUtil::AbsoluteDateTime(12, 25);
+
+// Get the last day of April for 2022
+$last_day_april = DateTimeUtil::AbsoluteDateTime(4, DateTimeUtil::RELATIVE_LAST_DAY);
+
+// Get the last day of the current month
+$last_day_this_month = DateTimeUtil::AbsoluteDateTime(null, DateTimeUtil::RELATIVE_LAST_DAY);
+
+// Get an array of Holiday objects for the US Federal Holidays from 2001
+$holidays_2001 = DateTimeUtil::usFederalHolidays(2001);
+```
 
 ## Installation
 
