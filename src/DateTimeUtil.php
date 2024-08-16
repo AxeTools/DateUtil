@@ -217,4 +217,22 @@ class DateTimeUtil {
             ),
         ];
     }
+
+    /**
+     * Is the check time, between the start and end times.  By default, the check is done inclusively
+     * but can be changed to be an exclusive check.
+     *
+     * @param \DateTimeInterface $start The starting time for the between check
+     * @param \DateTimeInterface $end The ending time for the between check
+     * @param \DateTimeInterface $checkTime The reference date the check to see if it is in between the
+     * @param bool $inclusive Optional, should the exact end and start times be included in the check (default) or excluded.
+     * @return bool
+     */
+    public static function isBetween(\DateTimeInterface $start, \DateTimeInterface $end, \DateTimeInterface $checkTime, $inclusive = true) {
+        if($inclusive) {
+            return ($start <= $checkTime && $end >= $checkTime);
+        } else {
+            return ($start < $checkTime && $end > $checkTime);
+        }
+    }
 }
