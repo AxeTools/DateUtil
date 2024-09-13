@@ -1,0 +1,29 @@
+name: PhpTests
+
+on: [ push ]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ ubuntu-latest, windows-latest, macOS-latest ]
+        php-versions: [ '5.6', '7.0' ]
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+
+      - name: Check PHP Version
+        run: php -v
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run Tests
+        run: composer run-script tests
