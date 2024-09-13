@@ -67,12 +67,12 @@ class DateTimeUtilTest extends TestCase {
      * @param $start
      * @param $end
      * @param $checkTime
-     * @param $inclusive
+     * @param $options
      * @param $expected
      * @return void
      */
-    public function isBetween($start, $end, $checkTime, $inclusive, $expected) {
-        $actual = DateTimeUtil::isBetween($start, $end, $checkTime, $inclusive);
+    public function isBetween($start, $end, $checkTime, $options, $expected) {
+        $actual = DateTimeUtil::isBetween($start, $end, $checkTime, $options);
         $this->assertEquals($expected, $actual);
     }
 
@@ -83,56 +83,84 @@ class DateTimeUtilTest extends TestCase {
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 11:00:00'),
-                true,
+                DateTimeUtil::ISBETWEEN_INCLUSIVE,
                 false
             ],
             'At Start' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                true,
+                DateTimeUtil::ISBETWEEN_INCLUSIVE,
                 true
+            ],
+            'At Start Inclusive Start' => [
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                DateTimeUtil::ISBETWEEN_INCLUSIVE_START,
+                true
+            ],
+            'At Start Inclusive End' => [
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                DateTimeUtil::ISBETWEEN_INCLUSIVE_END,
+                false
             ],
             'At Start Exclusive' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                false,
+                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
                 false
             ],
             'At Start Exclusive after' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:01'),
-                false,
+                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
                 true
             ],
             'Between' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:10:00'),
-                true,
+                DateTimeUtil::ISBETWEEN_INCLUSIVE,
                 true
             ],
             'At End' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                true,
+                DateTimeUtil::ISBETWEEN_INCLUSIVE,
                 true
             ],
             'At End Exclusive' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                false,
+                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
+                false
+            ],
+            'At End Inclusive End' => [
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                DateTimeUtil::ISBETWEEN_INCLUSIVE_END,
+                true
+            ],
+            'At End Inclusive Start' => [
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
+                DateTimeUtil::ISBETWEEN_INCLUSIVE_START,
                 false
             ],
             'After' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:10:00'),
-                true,
+                DateTimeUtil::ISBETWEEN_INCLUSIVE,
                 false
             ]
         ];

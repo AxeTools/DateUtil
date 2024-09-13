@@ -34,6 +34,14 @@ $last_day_this_month = DateTimeUtil::AbsoluteDateTime(null, DateTimeUtil::RELATI
 
 // Get an array of Holiday objects for the US Federal Holidays from 2001
 $holidays_2001 = DateTimeUtil::usFederalHolidays(2001);
+
+// Determine if a reference datetime is between a start and end datetime
+$start = Datetime::createFromFormat('Y-m-d', '2022-01-01');
+$end = Datetime::createFromFormat('Y-m-d', '2022-01-05');
+$reference = Datetime::createFromFormat('Y-m-d', '2022-01-03');
+$is_between = DateTimeUtil::isBetween($start, $end, $reference);
+
+// true
 ```
 
 ## Installation

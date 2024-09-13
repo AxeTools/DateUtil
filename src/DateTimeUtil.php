@@ -25,6 +25,11 @@ class DateTimeUtil {
      */
     const HOLIDAY_OBSERVED_SUNDAY_TO_MONDAY = 0b100;
 
+    const ISBETWEEN_INCLUSIVE = 0b11;
+    const ISBETWEEN_EXCLUSIVE = 0b00;
+    const ISBETWEEN_INCLUSIVE_START = 0b01;
+    const ISBETWEEN_INCLUSIVE_END = 0b10;
+
     /**
      * The last day of the month is a special relative date, this needs to be used in conjunction with the
      * Week::ABSOLUTE
@@ -225,14 +230,12 @@ class DateTimeUtil {
      * @param \DateTimeInterface $start The starting time for the between check
      * @param \DateTimeInterface $end The ending time for the between check
      * @param \DateTimeInterface $checkTime The reference date the check to see if it is in between the
-     * @param bool $inclusive Optional, should the exact end and start times be included in the check (default) or excluded.
+     * @param int $inclusiveOptions Optional, should the exact end and start times be included in the check (default) or excluded use the **DateTimeUtil::ISBETWEEN_** constants to define behavior.
      * @return bool
      */
-    public static function isBetween(\DateTimeInterface $start, \DateTimeInterface $end, \DateTimeInterface $checkTime, $inclusive = true) {
-        if($inclusive) {
-            return ($start <= $checkTime && $end >= $checkTime);
-        } else {
-            return ($start < $checkTime && $end > $checkTime);
-        }
+    public static function isBetween(\DateTimeInterface $start, \DateTimeInterface $end, \DateTimeInterface $checkTime, $inclusiveOptions = DateTimeUtil::ISBETWEEN_INCLUSIVE) {
+        $before_end = (self::hasFlag($inclusiveOptions, self::ISBETWEEN_INCLUSIVE_END)) ? ($end >= $checkTime) : ($end > $checkTime);
+        $after_start = (self::hasFlag($inclusiveOptions, self::ISBETWEEN_INCLUSIVE_START)) ? ($start <= $checkTime) : ($start < $checkTime);
+        return $after_start && $before_end;
     }
 }
