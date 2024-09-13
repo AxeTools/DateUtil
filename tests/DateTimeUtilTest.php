@@ -15,7 +15,7 @@ class DateTimeUtilTest extends TestCase {
 
     /**
      * @test
-     * @dataProvider getRelativeDateTimeDataProvider
+     * @dataProvider createRelativeDateTimeDataProvider
      *
      * @param int|null $month
      * @param int|null $day
@@ -25,14 +25,14 @@ class DateTimeUtilTest extends TestCase {
      *
      * @return void
      */
-    public function getRelativeDateTime($month, $day, $weekOfMonth, $year, DateTime $expected) {
-        $actual = DateTimeUtil::getRelativeDateTime($month, $day, $weekOfMonth, $year);
+    public function createRelativeDateTime($month, $day, $weekOfMonth, $year, DateTime $expected) {
+        $actual = DateTimeUtil::createRelativeDateTime($month, $day, $weekOfMonth, $year);
         $this->assertEquals($expected, $actual);
     }
 
     /**
      * @test
-     * @dataProvider getAbsoluteDataTimeDataProvider
+     * @dataProvider createAbsoluteDataTimeDataProvider
      *
      * @param int|null $month
      * @param int|null $day
@@ -41,8 +41,8 @@ class DateTimeUtilTest extends TestCase {
      *
      * @return void
      */
-    public function getAbsoluteDateTime($month, $day, $year, DateTime $expected) {
-        $actual = DateTimeUtil::getAbsoluteDateTime($month, $day, $year);
+    public function createAbsoluteDateTime($month, $day, $year, DateTime $expected) {
+        $actual = DateTimeUtil::createAbsoluteDateTime($month, $day, $year);
         $this->assertEquals($expected, $actual);
     }
 
@@ -57,7 +57,7 @@ class DateTimeUtilTest extends TestCase {
      * @return void
      */
     public function isHoliday($holidays, DateTime $testDate, $options, $expected){
-        $actual = DateTimeUtil::isHoliday($holidays, $options, $testDate);
+        $actual = DateTimeUtil::isHoliday($holidays, $testDate, $options);
         $this->assertEquals($expected, $actual);
     }
 
@@ -83,91 +83,91 @@ class DateTimeUtilTest extends TestCase {
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 11:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE,
                 false
             ],
             'At Start' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE,
                 true
             ],
             'At Start Inclusive Start' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE_START,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE_START,
                 true
             ],
             'At Start Inclusive End' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE_END,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE_END,
                 false
             ],
             'At Start Exclusive' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
-                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_EXCLUSIVE,
                 false
             ],
             'At Start Exclusive after' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:01'),
-                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_EXCLUSIVE,
                 true
             ],
             'Between' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:10:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE,
                 true
             ],
             'At End' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE,
                 true
             ],
             'At End Exclusive' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                DateTimeUtil::ISBETWEEN_EXCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_EXCLUSIVE,
                 false
             ],
             'At End Inclusive End' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE_END,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE_END,
                 true
             ],
             'At End Inclusive Start' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE_START,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE_START,
                 false
             ],
             'After' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:00:00'),
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 13:10:00'),
-                DateTimeUtil::ISBETWEEN_INCLUSIVE,
+                DateTimeUtil::IS_BETWEEN_INCLUSIVE,
                 false
             ]
         ];
     }
 
 
-    public static function getRelativeDateTimeDataProvider() {
+    public static function createRelativeDateTimeDataProvider() {
         return [
             'Relative Date, first Monday in January 2022' => [1, DayOfWeek::MONDAY, Week::FIRST, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-03 00:00:00')],
             'Relative Date, last Monday in January 2022' => [1, DayOfWeek::MONDAY, Week::LAST, 2022, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-01-31 00:00:00')],
@@ -195,7 +195,7 @@ class DateTimeUtilTest extends TestCase {
         ];
     }
 
-    public static function getAbsoluteDataTimeDataProvider() {
+    public static function createAbsoluteDataTimeDataProvider() {
         return [
             'full pass through, today' => [null, null, null, \DateTime::createFromFormat(self::DATETIME_FORMAT, date('Y-m-d 00:00:00'))],
             'Absolute Date, April 6th 2000' => [4, 6, 2000, \DateTime::createFromFormat(self::DATETIME_FORMAT, '2000-04-06 00:00:00')],
@@ -294,7 +294,7 @@ class DateTimeUtilTest extends TestCase {
             'Father\'s day an unobservable holiday, both observances on' => [
                 [
                     Holiday::create(
-                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        DateTimeUtil::createRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
                         'Father\'s day',
                         'Father\'s day',
                         '',
@@ -308,7 +308,7 @@ class DateTimeUtilTest extends TestCase {
             'Father\'s day an unobservable holiday, Sunday observance on' => [
                 [
                     Holiday::create(
-                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        DateTimeUtil::createRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
                         'Father\'s day',
                         'Father\'s day',
                         '',
@@ -322,7 +322,7 @@ class DateTimeUtilTest extends TestCase {
             'Father\'s day an unobservable holiday, no observance on' => [
                 [
                     Holiday::create(
-                        DateTimeUtil::getRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
+                        DateTimeUtil::createRelativeDateTime(6, DayOfWeek::SUNDAY, Week::THIRD, 2000),
                         'Father\'s day',
                         'Father\'s day',
                         '',

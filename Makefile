@@ -6,7 +6,7 @@
 # /_/   \_\/_/\_\___||_|\___/ \___/|_|___/
 #
 # https://github.com/AxeTools
-# AxeTools/BitFlagTrait
+# AxeTools/DateUtil
 #
 ###############################################################################
 .DEFAULT_GOAL := default

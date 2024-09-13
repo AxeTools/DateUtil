@@ -54,7 +54,7 @@ class Holiday {
      *
      * @return self
      */
-    public static function create(DateTime $dateTime, $longName, $shortName, $description = null, $observedShift = false) {
+    public static function create(DateTime $dateTime, $longName, $shortName = null, $description = null, $observedShift = false) {
         return new self($dateTime, $longName, $shortName, $description, $observedShift);
     }
 
