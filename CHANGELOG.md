@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Changed
 
 - Support for php ^7.1
+- Added types for all parameters and returns for all methods
 
 ## 1.0.0
 
