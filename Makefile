@@ -39,6 +39,12 @@ tests: up
 	@echo "##### Dev php Container Tests #####"
 	@(docker compose exec php composer tests)
 
+#
+# Execute codefix checks against the dev php container
+#
+codefix: up
+	@echo "##### Dev php Container Tests #####"
+	@(docker compose exec php composer codefix)
 
 #
 # Install the composer assets
