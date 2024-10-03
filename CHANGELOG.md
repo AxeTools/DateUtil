@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog]
 and this project adheres to [Semantic Versioning].
 
+## 1.0.1
+
+### Changed
+
+- Support for php ^5.6 || ^7.0 || ^8.0
+
 ## 1.0.0
 
 ### Added

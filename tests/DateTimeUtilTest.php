@@ -76,7 +76,7 @@ class DateTimeUtilTest extends TestCase {
         $this->assertEquals($expected, $actual);
     }
 
-    public function isBetweenDataProvider()
+    public static function isBetweenDataProvider()
     {
         return [
             'Before' => [
@@ -165,7 +165,6 @@ class DateTimeUtilTest extends TestCase {
             ]
         ];
     }
-
 
     public static function createRelativeDateTimeDataProvider() {
         return [
