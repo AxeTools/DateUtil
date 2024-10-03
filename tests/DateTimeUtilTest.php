@@ -61,7 +61,7 @@ class DateTimeUtilTest extends TestCase {
     /**
      * @return array<mixed>
      */
-    public function isBetweenDataProvider(): array {
+    public static function isBetweenDataProvider(): array {
         return [
             'Before' => [
                 \DateTime::createFromFormat(self::DATETIME_FORMAT, '2022-12-02 12:00:00'),
