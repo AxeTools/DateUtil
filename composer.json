@@ -45,7 +45,7 @@
         "phpstan": [
             "phpstan analyse src/ tests/ --no-progress --memory-limit=1G --level 8"
         ],
-        "phpunit": "phpunit --verbose --colors=always",
+        "phpunit": "phpunit --colors=always",
         "tests": [
             "@phpstan",
             "@phpunit"
